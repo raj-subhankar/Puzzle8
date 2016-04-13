@@ -52,7 +52,17 @@ public class PuzzleBoardView extends View {
 
     public void shuffle() {
         if (animation == null && puzzleBoard != null) {
-            // Do something.
+
+            for(int i =0; i<10; i++){
+                ArrayList<PuzzleBoard> neighbours = puzzleBoard.neighbours();  //get neighbours
+
+                int randomInt = random.nextInt(neighbours.size());
+
+                PuzzleBoard newPuzzleBoard = neighbours.get(randomInt);  //return a possible puzzleboard state
+                puzzleBoard = newPuzzleBoard;
+            }
+            invalidate();
+
         }
     }
 

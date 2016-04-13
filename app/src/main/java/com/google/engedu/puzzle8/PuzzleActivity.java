@@ -26,6 +26,7 @@ public class PuzzleActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Bitmap imageBitmap = null;
     private PuzzleBoardView boardView;
+    private RelativeLayout container;
 
     private Uri fileUri;
 
@@ -35,9 +36,9 @@ public class PuzzleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puzzle);
-        ivPhoto = (ImageView) findViewById(R.id.ivPhoto);
+//        ivPhoto = (ImageView) findViewById(R.id.ivPhoto);
 
-        RelativeLayout container = (RelativeLayout) findViewById(R.id.puzzle_container);
+        container = (RelativeLayout) findViewById(R.id.puzzle_container);
         boardView = new PuzzleBoardView(this);
 
         // Some setup of the view.
@@ -107,7 +108,14 @@ public class PuzzleActivity extends AppCompatActivity {
 
                 final Bitmap bitmap = BitmapFactory.decodeFile(fileUri.getPath(), options);
 
-                ivPhoto.setImageBitmap(bitmap);
+//                ivPhoto.setImageBitmap(bitmap);
+//                int imageWidth = options.outWidth;
+
+                boardView.initialize(bitmap, container);
+
+//                Intent i = new Intent(PuzzleActivity.this, PuzzleBoard.class);
+//                i.putExtra("bitmap", bitmap);
+//                startActivity(i);
 
 
             } else if (resultCode == RESULT_CANCELED) {
