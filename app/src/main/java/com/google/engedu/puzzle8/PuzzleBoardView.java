@@ -9,6 +9,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 import java.util.Random;
 
 public class PuzzleBoardView extends View {
@@ -23,6 +26,13 @@ public class PuzzleBoardView extends View {
         activity = (Activity) context;
         animation = null;
     }
+
+    private Comparator<PuzzleBoard> comparator = new Comparator<PuzzleBoard>() {
+        @Override
+        public int compare(PuzzleBoard lhs, PuzzleBoard rhs) {
+            return lhs.priority() - rhs.priority();
+        }
+    };
 
     public void initialize(Bitmap imageBitmap, View parent) {
         int width = getWidth();
@@ -53,7 +63,7 @@ public class PuzzleBoardView extends View {
     public void shuffle() {
         if (animation == null && puzzleBoard != null) {
 
-            for(int i =0; i<10; i++){
+            for(int i =0; i<20; i++){
                 ArrayList<PuzzleBoard> neighbours = puzzleBoard.neighbours();  //get neighbours
 
                 int randomInt = random.nextInt(neighbours.size());
@@ -85,5 +95,28 @@ public class PuzzleBoardView extends View {
     }
 
     public void solve() {
+        PriorityQueue<PuzzleBoard> queue = new PriorityQueue<>(1,comparator);
+
+        PuzzleBoard current = new PuzzleBoard(puzzleBoard, -1);
+        current.setPrevBoard(null);
+        queue.add(current);
+        while (!queue.isEmpty()){
+            PuzzleBoard bestState = queue.poll();
+            if(bestState.resolved()){
+                ArrayList<PuzzleBoard> steps = new ArrayList<>();
+                while (bestState.getPrevBoard() != null){
+                    steps.add(bestState);
+                    bestState = bestState.getPrevBoard();
+                }
+                Collections.reverse(steps);
+                animation = steps;
+                invalidate();
+                break;
+            }
+            else {
+                queue.addAll(bestState.neighbours());
+            }
+        }
+
     }
 }

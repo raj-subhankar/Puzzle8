@@ -43,10 +43,10 @@ public class PuzzleBoard {
         }
     }
 
-    PuzzleBoard(PuzzleBoard otherBoard) {
+    PuzzleBoard(PuzzleBoard otherBoard, int steps) {
         previousBoard = otherBoard;
         tiles = (ArrayList<PuzzleTile>) otherBoard.tiles.clone();
-
+        this.steps = steps+1;
 
     }
 
@@ -118,6 +118,13 @@ public class PuzzleBoard {
         return false;
     }
 
+    public void setPrevBoard(PuzzleBoard previousBoard) {
+        this.previousBoard = previousBoard;
+    }
+    public PuzzleBoard getPrevBoard() {
+        return previousBoard;
+    }
+
     public ArrayList<PuzzleBoard> neighbours() {
         int xaxis = 0;
         int yaxis = 0;
@@ -136,7 +143,7 @@ public class PuzzleBoard {
             int Y = yaxis + delta[1];
 
             if (X >= 0 && X < NUM_TILES && Y >= 0 && Y < NUM_TILES) {
-                PuzzleBoard newBoard = new PuzzleBoard(this);          //making copy of current board
+                PuzzleBoard newBoard = new PuzzleBoard(this, steps);          //making copy of current board
                 newBoard.swapTiles(XYtoIndex(X, Y), XYtoIndex(xaxis, yaxis));    //move tile
                 neighbours.add(newBoard);
             }
@@ -145,7 +152,22 @@ public class PuzzleBoard {
     }
 
     public int priority() {
-        return 0;
+
+        int dist = 0;
+        PuzzleTile tile;
+        for(int i = 0; i < 9; i++){
+            tile = tiles.get(i);
+            if(tile != null){
+                int pos = tile.getNumber();
+                int x = (pos % 3) - 1;
+                int y = pos / 3;
+                int currentX = (i % 3) - 1;
+                int currentY = i / 3;
+                dist = dist + (Math.abs(currentX - x)) + Math.abs(currentY - y);
+            }
+        }
+
+        return dist + steps;
     }
 
 }
